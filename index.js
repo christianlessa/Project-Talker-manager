@@ -3,6 +3,9 @@ const bodyParser = require('body-parser');
 const fs = require('fs').promises;
 
 const talkers = 'talker.json';
+const validEmail = require('./src/middlewarers/validation/validationEmail');
+const validPassword = require('./src/middlewarers/validation/validationPassword');
+const token = require('./src/middlewarers/createToken');
 
 const app = express();
 app.use(bodyParser.json());
@@ -33,6 +36,8 @@ app.get('/talker/:id', async (req, res) => {
 
   res.status(200).json(talkerID);
 });
+
+app.post('/login', validEmail, validPassword, token);
 
 app.listen(PORT, () => {
   console.log('Online');
