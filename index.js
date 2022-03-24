@@ -6,6 +6,7 @@ const talkers = 'talker.json';
 const validEmail = require('./src/middlewarers/validation/validationEmail');
 const validPassword = require('./src/middlewarers/validation/validationPassword');
 const validToken = require('./src/middlewarers/validation/validationToken');
+const validName = require('./src/middlewarers/validation/validationName');
 const token = require('./src/middlewarers/createToken');
 
 const app = express();
@@ -40,7 +41,7 @@ app.get('/talker/:id', async (req, res) => {
 
 app.post('/login', validEmail, validPassword, token);
 
-app.post('/talker', validToken, async (req, res) => {
+app.post('/talker', validToken, validName, async (req, res) => {
   const { name, age, talk, watchedAt, rate } = req.body;
 
   const fileTalkers3 = await fs.readFile(talkers).then((data) => JSON.parse(data));
