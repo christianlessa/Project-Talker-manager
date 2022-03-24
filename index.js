@@ -9,6 +9,7 @@ const validToken = require('./src/middlewarers/validation/validationToken');
 const validName = require('./src/middlewarers/validation/validationName');
 const validAge = require('./src/middlewarers/validation/validationAge');
 const validTalk = require('./src/middlewarers/validation/validationTalk');
+const validWatchedAt = require('./src/middlewarers/validation/validationWatchedAt');
 const token = require('./src/middlewarers/createToken');
 
 const app = express();
@@ -43,7 +44,8 @@ app.get('/talker/:id', async (req, res) => {
 
 app.post('/login', validEmail, validPassword, token);
 
-app.post('/talker', validToken, validName, validAge, validTalk, async (req, res) => {
+app.post('/talker', validToken, validTalk, validWatchedAt, validName,
+ validAge, async (req, res) => {
   const { name, age, talk, watchedAt, rate } = req.body;
 
   const fileTalkers3 = await fs.readFile(talkers).then((data) => JSON.parse(data));
