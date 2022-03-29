@@ -60,8 +60,8 @@ validAge, validRate, async (req, res) => {
   return res.status(201).json(obj);
 });
 
-app.put('/talker/:id', validToken, validName, validAge, validTalk, validWatchedAt,
- validRate, async (req, res) => {
+app.put('/talker/:id', validToken, validName, validAge,
+ validTalk, validWatchedAt, validRate, async (req, res) => {
   const { id } = req.params;
   const { name, age, talk: { watchedAt, rate } } = req.body;
 
@@ -73,6 +73,20 @@ app.put('/talker/:id', validToken, validName, validAge, validTalk, validWatchedA
   await fs.writeFile(talkers, JSON.stringify(fileTalkers));
 
   return res.status(200).json(fileTalkers[talkerIndex]);
+});
+
+app.delete('/talker/:id', validToken, async (req, res) => {
+  const { id } = req.params;
+
+  const fileTalkers = await fs.readFile(talkers).then((data) => JSON.parse(data));
+
+  const fileIndex = fileTalkers.findIndex((data) => data.id === Number(id));
+
+  fileTalkers.splice(fileIndex, 1);
+
+  await fs.writeFile(talkers, JSON.stringify(fileTalkers));
+
+  res.status(204).json(fileTalkers[fileIndex]);
 });
 
 app.listen(PORT, () => {
