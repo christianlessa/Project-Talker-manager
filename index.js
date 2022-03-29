@@ -46,18 +46,33 @@ app.get('/talker/:id', async (req, res) => {
 app.post('/login', validEmail, validPassword, token);
 
 app.post('/talker', validToken, validTalk, validWatchedAt, validName,
- validAge, validRate, async (req, res) => {
+validAge, validRate, async (req, res) => {
   const { name, age, talk, watchedAt, rate } = req.body;
-
+  
   const fileTalkers3 = await fs.readFile(talkers).then((data) => JSON.parse(data));
-
+  
   const obj = { name, age, id: fileTalkers3.length + 1, talk, watchedAt, rate };
-
+  
   fileTalkers3.push(obj);
-
+  
   await fs.writeFile(talkers, JSON.stringify(fileTalkers3));
-
+  
   return res.status(201).json(obj);
+});
+
+app.put('/talker/:id', validToken, validName, validAge, validTalk, validWatchedAt,
+ validRate, async (req, res) => {
+  const { id } = req.params;
+  const { name, age, talk: { watchedAt, rate } } = req.body;
+
+  const fileTalkers = await fs.readFile(talkers, 'utf8').then((data) => JSON.parse(data));
+  const talkerIndex = fileTalkers.findIndex((data) => data.id === Number(id));
+
+  fileTalkers[talkerIndex] = { ...fileTalkers[talkerIndex], name, age, talk: { watchedAt, rate } };
+
+  await fs.writeFile(talkers, JSON.stringify(fileTalkers));
+
+  return res.status(200).json(fileTalkers[talkerIndex]);
 });
 
 app.listen(PORT, () => {
